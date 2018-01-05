@@ -243,7 +243,12 @@ function initHTML(data, isPc) {
 
   data.forEach(function (item, index) {// 如果是app，则根据iframe 来
     var ahtml = '';
-    totalHeight += Number(item.height);
+    
+    if(isPc){
+    	totalHeight += Number(item.height*(item.width/1920));
+    }else{
+    	totalHeight += Number(item.height);
+    }
     item.data && item.data.forEach(function (list) {
       var clkElemt = '';
       if (isPc == 'pc') {
@@ -281,6 +286,16 @@ function initHTML(data, isPc) {
       $(linkDomArr[i]).attr('href', newVer)
     }
   })();
+    console.log('修改js文件版本号');
+    // 修改js 文件 版本号==change-version 需要修改的类名
+    var jsDom = Array.from($('.change-version'));
+    console.log(jsDom);
+    jsDom.forEach((elm,idx)=>{
+        console.log(elm);
+        var oldVer=$(elm).attr('src');
+            var newVer=oldVer+'?ver='+new Date().getTime();
+            $(elm).attr('src',newVer)
+    });
 }
 // 生成 目标html 文件===================
 function createHTML(path) {
