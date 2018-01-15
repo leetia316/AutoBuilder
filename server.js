@@ -2,21 +2,22 @@
 // 创建一个服务器
 var express = require('express');
 var fs = require('fs');
-var utils = require('./server/utils/utils.js');
+var utils = require('./server/utils/utils');
 // 解析 post 请求 参数
 var bodyParser = require('body-parser');
 // 引入 压缩插件v
-var dozip = require('./server/utils/zip.js');
+var dozip = require('./server/utils/zip');
 // zip.js test code
 //dozip.dozip('autobuild/target/app');
-var base64 = require('./server/utils/base64.js');
+var base64 = require('./server/utils/base64');
 // 引入 生成 html 脚本 js
-var build = require('./server/components/AutoBuild/index.js');
-
+var build = require('./server/components/AutoBuild/index');
+//var imgZone = require("./server/utils/imgZip");
+var imgZone = require('./server/utils/compress');
 
 //引入配置文件
 var config = require('./config');
-console.log('当前运行环境为：'+config.env);
+console.log('当前运行环境为：' + config.env);
 
 var hostName = 'localhost';
 // 将端口号设置为配置文件的端口号，默认值为3000
@@ -110,26 +111,36 @@ app.post('/getjson', (req, res) => {
   const isPc = Number(req.body.isPc) === 1;
   const writePath = `${autoBuildBasePath}/img`;
 
+  //res.send(result)
+  const pageType = isPc ? 'pc' : 'app';
+
   //    res.send({
   //        result:0
   //    })
   ///
   base64.base642Img(data, isPc, writePath);
-  //res.send(result)
+
   const configData = {
     data: data,
     title: req.body.title || '',
     description: req.body.description || '',
     keyword: req.body.keyword || ''
   }
-  const pageType = isPc ? 'pc' : 'app';
+
   const options = {
     pageType: pageType,
     configData: configData,
     callback: function (path) {
       console.log(`返回生成目标文件夹路径 :${path}`)
       const zipOutFile = `${downDIST}/${pageType}`;
-      dozip.dozip(path, zipOutFile);
+      
+      imgZone(`${writePath}/${pageType}`, `${writePath}/${pageType}`, {    
+        quality: '65-80'
+      }, function () {
+        console.log("图片压缩成功！！");
+        dozip.dozip(path, zipOutFile);
+      });
+      
       res.send({
         result: 0,
         data: {
@@ -145,6 +156,7 @@ app.post('/getjson', (req, res) => {
       // })
     }
   }
+
   // 调用模块，生成 文件
   build.buildHtml(options);
 });
@@ -172,7 +184,7 @@ app.get('/app.zip', (req, res) => {
   })
 });
 
-app.get('/pc.zip', (req, res) => {  
+app.get('/pc.zip', (req, res) => {
   res.download(`${downDIST}/pc.zip`, function (err) {
     if (err) {
       console.log('下载pc.zip文件失败');

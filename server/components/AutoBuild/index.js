@@ -140,7 +140,7 @@ function getConfigureJson(path) {
   }
   headHTMLAttr = {
     title: configData.title || '买车用车上长安商城',
-    description: configData.description || 　'买车用车上长安商城',
+    description: configData.description || '买车用车上长安商城',
     keyword: configData.keyword || '买车用车上长安商城'
   };
   return configData.data;
@@ -150,7 +150,7 @@ function combinationData(getConfigJson, path) {
   console.log('组合配置json文件，和图片信息');
   var clickZone = getConfigJson(path);
   //console.log(clickZone);
-  clickZone.length && 　clickZone.forEach(function (item) {// 给需要，添加点击区域的添加点击的url
+  clickZone.length && clickZone.forEach(function (item) {// 给需要，添加点击区域的添加点击的url
     //console.log(item.data,item.index);
     var i = Number(item.index) - 1;
     imgUrl[i].data = item.data;
@@ -243,11 +243,11 @@ function initHTML(data, isPc) {
 
   data.forEach(function (item, index) {// 如果是app，则根据iframe 来
     var ahtml = '';
-    
-    if(isPc){
-    	totalHeight += Number(item.height*(item.width/1920));
-    }else{
-    	totalHeight += Number(item.height);
+
+    if (isPc) {
+      totalHeight += Number(item.height * (item.width / 1920));
+    } else {
+      totalHeight += Number(item.height);
     }
     item.data && item.data.forEach(function (list) {
       var clkElemt = '';
@@ -262,7 +262,7 @@ function initHTML(data, isPc) {
   });
 
   $('.content').html(html);
-  
+
   var allClkA = $('.img-box .btn');
   var arr = Array.prototype.slice.apply(allClkA)
   arr.forEach(function (item, index) {
@@ -286,16 +286,16 @@ function initHTML(data, isPc) {
       $(linkDomArr[i]).attr('href', newVer)
     }
   })();
-    console.log('修改js文件版本号');
-    // 修改js 文件 版本号==change-version 需要修改的类名
-    var jsDom = Array.from($('.change-version'));
-    console.log(jsDom);
-    jsDom.forEach((elm,idx)=>{
-        console.log(elm);
-        var oldVer=$(elm).attr('src');
-            var newVer=oldVer+'?ver='+new Date().getTime();
-            $(elm).attr('src',newVer)
-    });
+  console.log('修改js文件版本号');
+  // 修改js 文件 版本号==change-version 需要修改的类名
+  var jsDom = Array.from($('.change-version'));
+  console.log(jsDom);
+  jsDom.forEach((elm, idx) => {
+    console.log(elm);
+    var oldVer = $(elm).attr('src');
+    var newVer = oldVer + '?ver=' + new Date().getTime();
+    $(elm).attr('src', newVer)
+  });
 }
 // 生成 目标html 文件===================
 function createHTML(path) {
