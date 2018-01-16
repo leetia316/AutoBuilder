@@ -245,10 +245,15 @@ function initHTML(data, isPc) {
     var ahtml = '';
 
     if (isPc) {
-      totalHeight += Number(item.height * (item.width / 1920));
+      totalHeight += Number(item.height * (1920 / item.width));
     } else {
       totalHeight += Number(item.height);
     }
+
+    if (String(totalHeight).indexOf(".") > -1) {
+      totalHeight = Math.round(totalHeight);
+    }
+
     item.data && item.data.forEach(function (list) {
       var clkElemt = '';
       if (isPc == 'pc') {

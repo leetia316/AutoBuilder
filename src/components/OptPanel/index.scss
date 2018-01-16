@@ -12,19 +12,19 @@
         position:absolute;
         margin-left: -6em;
         }
-    }
+    } 
    
     // 选择生成专题页 类型
     .pageType{        
       margin-bottom: 10px;
         label{
-            margin-right: 25px;            
+            margin-right: 25px;
         }
     }
     // 设置网页 title keyword ，description
-    .htmlTitle{                       
+    .htmlTitle{
         input{
-            height: 28px;           
+            height: 28px;            
         }
         input,textarea{
            min-width: 20em;
@@ -73,5 +73,8 @@
         width:100px;
         height:44px;
         line-height:44px;
+    }
+    .ml{
+        margin-left: 10px;
     }
 }

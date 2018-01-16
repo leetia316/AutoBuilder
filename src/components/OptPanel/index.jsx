@@ -18,7 +18,8 @@ class OptPanel extends Component {
     this.state = {
       imgSrc: [],
       choosedId: '',
-      downloadurl: '',//下载 按钮
+      downloadUrl: '',//下载 按钮
+      previewUrl: '',
       title: '',// 网页title
       keyword: '',//网页 keyword
       description: '',//网页 description
@@ -65,7 +66,7 @@ class OptPanel extends Component {
   //     console.log('--------------------------');
   //     conosle.log(nextProps);
   // }
-  
+
   // 测试===============================================
   choose(e) {
     //console.log(e.target.value)
@@ -227,7 +228,7 @@ class OptPanel extends Component {
             elmt.top = changeData.top ? changeData.top : elmt.top;
             // 这里对每个 点击区域 的 dataTitle dataType url value
             if (changeData.key) {
-              elmt[changeData.key] = changeData.value || 　'';
+              elmt[changeData.key] = changeData.value || '';
             }
           }
         })
@@ -306,7 +307,10 @@ class OptPanel extends Component {
         url: `${BasePath}/getjson`,
         success: function (data) {
           console.log(data);
-          data.result == 0 && data.data && data.data.downloadUrl && _this.setState({ downloadurl: data.data.downloadUrl })
+          if(data.result == 0 && data.data){
+            data.data.downloadUrl && _this.setState({ downloadUrl: data.data.downloadUrl });
+            data.data.previewUrl && _this.setState({ previewUrl: data.data.previewUrl });
+          }
         },
         error: function (err) {
           console.log(err);
@@ -440,11 +444,11 @@ class OptPanel extends Component {
             <label htmlFor="">
               <span className="txt">网页标题：</span>
               <input type="text" onChange={this.setHTMLTitle.bind(this)} placeholder="请输入网页 名称" />
-            </label>          
+            </label>
             <label htmlFor="">
               <span className="txt">网页关键字：</span>
               <input type="text" onChange={this.setHTMLKeyWord.bind(this)} placeholder="请输入网页 关键字" />
-            </label>          
+            </label>
             <label htmlFor="">
               <span className="txt">网页描述：</span>
               <input type="text" onChange={this.setHTMLDecription.bind(this)} placeholder="请输入网页 描述" />
@@ -489,9 +493,12 @@ class OptPanel extends Component {
           <input type="file" onChange={this.choose.bind(this)} />
           <button onClick={this.getLayData.bind(this)}>开始构建</button>
           {
-            <a href={this.state.downloadurl}
-              style={{ display: this.state.downloadurl ? 'inline-block' : 'none' }}
-              download={this.state.downloadurl}>点击下载</a>
+            <a href={this.state.previewUrl}
+              style={{ display: this.state.previewUrl ? 'inline-block' : 'none' }} className="ml" target="_blank">预览</a>
+          }
+          {<a href={this.state.downloadUrl}
+            style={{ display: this.state.downloadUrl ? 'inline-block' : 'none' }} className="ml"
+            download={this.state.downloadUrl}>点击下载</a>
           }
           {/* <button onClick = {this.storageData.bind(this)}>保存当前配置数据</button> */}
         </div>

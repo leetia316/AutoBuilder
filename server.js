@@ -2,6 +2,7 @@
 // 创建一个服务器
 var express = require('express');
 var fs = require('fs');
+var path=require("path");
 var utils = require('./server/utils/utils');
 // 解析 post 请求 参数
 var bodyParser = require('body-parser');
@@ -31,10 +32,10 @@ var autoBuildBasePath = './server/components/AutoBuild';
 
 var app = express();
 
-//limit:'10000kb'  设置 服务器 接受的 数据 大小限制
+//limit:'30000kb'  设置 服务器 接受的 数据 大小限制
 app.use(bodyParser.urlencoded({
   extended: false,
-  limit: '10000kb'
+  limit: '30000kb'
 }));
 
 app.all('*', (req, res, next) => {
@@ -42,7 +43,7 @@ app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
   res.header("X-Powered-By", ' 3.2.1')
-  res.header("Content-Type", "application/json;charset=utf-8");
+  //res.header("Content-Type", "application/json;charset=utf-8");
   next();
 });
 
@@ -58,6 +59,11 @@ app.get('/', (req, res) => {
     res.end(data);
   });
 });
+
+app.use('/preview_pc', express.static(path.join(__dirname, '/server/components/AutoBuild/public/pc')));
+
+app.use('/preview_app', express.static(path.join(__dirname, '/server/components/AutoBuild/public/app')));
+
 
 app.get('/*.js', (req, res) => {
   const path = req.path;
@@ -130,21 +136,22 @@ app.post('/getjson', (req, res) => {
   const options = {
     pageType: pageType,
     configData: configData,
-    callback: function (path) {
-      console.log(`返回生成目标文件夹路径 :${path}`)
+    callback: function (tPath) {
+      console.log(`返回生成目标文件夹路径 :${tPath}`)
       const zipOutFile = `${downDIST}/${pageType}`;
-      
-      imgZone(`${writePath}/${pageType}`, `${writePath}/${pageType}`, {    
+
+      imgZone(`${tPath}/img`, `${tPath}/img`, {
         quality: '65-80'
       }, function () {
         console.log("图片压缩成功！！");
-        dozip.dozip(path, zipOutFile);
+        dozip.dozip(tPath, zipOutFile);
       });
-      
+
       res.send({
         result: 0,
         data: {
-          downloadUrl: `${pageType}.zip`//'./app.zip'
+          previewUrl: `preview_${pageType}/index.html`,
+          downloadUrl: `${pageType}.zip`//'./app.zip'          
         }
       });
       // res.download(`./${zipFileName}.zip`,(err)=>{
