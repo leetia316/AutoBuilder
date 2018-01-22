@@ -1,30 +1,27 @@
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import './index.css';
-import Header from './components/Header';
-import FuncPanel from './components/FuncPanel';
-import OptPanel from './components/OptPanel';
+import React, { Component } from "react";
+import ReactDom from "react-dom";
+import "./index.css";
+import Header from "./components/Header";
+import FuncPanel from "./components/FuncPanel";
+import OptPanel from "./components/OptPanel";
 
 // 显示头部信息
-const headerTitle = "专题可视化构建工具"
+const headerTitle = "专题可视化构建工具";
 // 左侧 导航栏 数据
 const leftNavList = [
   {
-    val: '添加点击框',
-    type: 'addBox'
+    val: "添加点击框",
+    type: "addBox"
   }
-]
-
+];
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       imgList: [],
-      choosed: {
-
-      }
-    }
+      choosed: {}
+    };
   }
 
   render() {
@@ -40,8 +37,8 @@ class App extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-ReactDom.render(<App />, document.getElementById('content'));
+ReactDom.render(<App />, document.getElementById("content"));

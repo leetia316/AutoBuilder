@@ -9,10 +9,10 @@ import './index.css';
 
 class DelBtn extends Component {
   constructor(props) {
-    super(props)
+    super(props);
   }
   handleClick(e) {
-    const data = this.props.needData
+    const data = this.props.needData;
     typeof this.props.clickCb === 'function' && this.props.clickCb(data);
   }
   render() {
@@ -21,7 +21,7 @@ class DelBtn extends Component {
         style={this.props.styleObj}
         onClick={this.handleClick.bind(this)}
         className="right-up-btn"></i>
-    )
+    );
   }
 }
 
