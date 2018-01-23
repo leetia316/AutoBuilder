@@ -4,27 +4,27 @@
 //  父组件 要传递 点击回调过来
 // 父组件 需要的数据 通过属性绑定过来，在通过 回调函数 传过去
 // 父组建  通过数据，设置，本组建 的 位置 left，top ，right，bottom
-import React, { Component } from 'react';
-import './index.css';
+import React, { Component } from "react";
+import "./index.scss";
 
 class DelBtn extends Component {
   constructor(props) {
     super(props);
+    this.handleClick = this.handleClick.bind(this);
   }
   handleClick(e) {
     const data = this.props.needData;
-    typeof this.props.clickCb === 'function' && this.props.clickCb(data);
+    typeof this.props.clickCb === "function" && this.props.clickCb(data);
   }
   render() {
     return (
       <i
         style={this.props.styleObj}
-        onClick={this.handleClick.bind(this)}
-        className="right-up-btn"></i>
+        onClick={this.handleClick}
+        className="right-up-btn"
+      />
     );
   }
 }
 
 export default DelBtn;
-
-

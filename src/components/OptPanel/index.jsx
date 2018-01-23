@@ -20,15 +20,39 @@ class OptPanel extends Component {
     this.state = {
       imgSrc: [],
       choosedId: "",
-      downloadUrl: "", //下载 按钮
-      previewUrl: "",
-      title: "", // 网页title
-      keyword: "", //网页 keyword
-      description: "", //网页 description
-      pageType: "", // 网页 类型 app ，pc
       test: ""
     };
+
+    this.imgOnload = this.imgOnload.bind(this);
+    this.delImg = this.delImg.bind(this);
+    this.delDragArea = this.delDragArea.bind(this);
+    this.dragMove = this.dragMove.bind(this);
+    this.changeAttrList = this.changeAttrList.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
   }
+
+  // 图片onload 事件
+  imgOnload(e) {
+    console.log(e.target.offsetWidth, e.target.offsetHeight);
+    const trgt = e.target;
+    const id = trgt.id;
+    const width = trgt.offsetWidth;
+    const height = trgt.offsetHeight;
+    const tplArr = this.state.imgSrc;
+    tplArr.map((elm, idx) => {
+      if (elm.id == id) {
+        //  如果这个对象没有 widht ,height 则设置，
+        elm.width = !elm.width && width;
+        elm.height = !elm.height && height;
+      }
+    });
+    this.setState({
+      imgSrc: tplArr
+    });
+
+    // e.target.width, e.target.heigt ,获取 图片的高度，宽度
+  }
+
   // 测试，组件生命 周期  在组件 绘画之前 调用
   componentWillMount() {
     //  这里设置 state 不会 发生重绘，
@@ -74,66 +98,6 @@ class OptPanel extends Component {
   //     conosle.log(nextProps);
   // }
 
-  // 测试===============================================
-  choose(e) {
-    //console.log(e.target.value)
-    var fileReader = new FileReader();
-    var file = e.target.files[0];
-    fileReader.readAsDataURL(file);
-    var arr = this.state.imgSrc;
-    //console.log(file);
-    fileReader.onloadend = onEv => {
-      var src = onEv.target.result; //base64
-      var img = new Image();
-      img.src = src;
-      img.onload = function() {
-        //console.log(img.width,img.height);
-      };
-      var obj = {
-        id: new Date().getTime(),
-        src: src,
-        isActive: false
-      };
-      // 获取图片的宽和高，w，h 不是真实的，是相对的，要获取百分比
-      arr.push(obj);
-      this.setState({ imgSrc: arr });
-    };
-  }
-  // 图片onload 事件
-  imgOnload(e) {
-    console.log(e.target.offsetWidth, e.target.offsetHeight);
-    const trgt = e.target;
-    const id = trgt.id;
-    const width = trgt.offsetWidth;
-    const height = trgt.offsetHeight;
-    const tplArr = this.state.imgSrc;
-    tplArr.map((elm, idx) => {
-      if (elm.id == id) {
-        //  如果这个对象没有 widht ,height 则设置，
-        elm.width = !elm.width && width;
-        elm.height = !elm.height && height;
-      }
-    });
-    this.setState({
-      imgSrc: tplArr
-    });
-
-    // e.target.width, e.target.heigt ,获取 图片的高度，宽度
-  }
-  choosedImg(e) {
-    var id = e.target.id;
-    var imgArr = this.state.imgSrc;
-    imgArr.map((elm, idx) => {
-      // 设置对应的 key 的值
-      elm.isActive = elm.id == id ? true : false;
-    });
-    this.setChoosedImg(imgArr, id);
-    e.stopPropagation();
-  }
-  setChoosedImg(arr, id) {
-    this.setState({ imgSrc: arr });
-    this.setState({ choosedId: id }); // 记录 选中 img的id
-  }
   componentDidMount() {
     // var dom = this.getDOMNode()
 
@@ -251,100 +215,7 @@ class OptPanel extends Component {
       });
     return sourceData;
   }
-  // 得到布局 数据函数==============向后台发起  ajax 通信，数据，
-  getLayData() {
-    const data = this.state.imgSrc;
-    // 根据 imgSrc 数据算取，点击区域的 left ,top,width,height,css 样式
 
-    const totalArr = [];
-    data.map((elm, idx) => {
-      const parentWidth = elm.width || "";
-      const parentHeight = elm.height || "";
-      const index_idx = idx;
-      const arr = [];
-      // 轮询 点击区域
-      elm.clkArr &&
-        elm.clkArr.map((elmt, index) => {
-          const width = `${(elmt.width / parentWidth * 100).toFixed(2)}%`;
-          const height = `${(elmt.height / parentHeight * 100).toFixed(2)}%`;
-          const left = `${(elmt.left / parentWidth * 100).toFixed(2)}%`;
-          const top = `${(elmt.top / parentHeight * 100).toFixed(2)}%`;
-          const url = `${elmt.url || ""}`;
-          const dataTitle = `${elmt.dataTitle || ""}`;
-          const dataType = `${elmt.dataType || ""}`;
-          const obj = {
-            width,
-            height,
-            left,
-            top,
-            dataTitle,
-            dataType,
-            url
-          };
-          arr.push(obj);
-        });
-      totalArr.push({
-        // 图片索引，第几章图片
-        index: index_idx + 1,
-        // 没张图片的 点击区域 的样式 百分比 eg{left：'',top:'',width:'',height:''}
-        data: (arr.length && arr) || "",
-        // 图片的 base64编码
-        base64Src: elm.src
-      });
-    });
-    console.log(totalArr);
-    // 发起ajax 请求，server。js来获取并相应
-    const sendData = JSON.stringify(totalArr);
-    // 这里要组装 html 的title，标签，的内容
-    // meta标签 的 keyword属性 和 description 属性
-    const title = this.state.title;
-    const description = this.state.description;
-    const keyword = this.state.keyword;
-    // 得到 生成 网页 的 类型 pc app
-
-    const isPc =
-      (this.state.pageType == "pc" && 1) ||
-      (this.state.pageType == "app" && 2) ||
-      "";
-    // 闭包
-    const _this = this;
-
-    const BasePath = `${window.location.protocol}//${window.location.host}`;
-    // 发起请求 前验证数据 的有效性==============
-    // 发起ajax 请求，server。js来获取并相应
-    if (totalArr.length) {
-      $.ajax({
-        data: {
-          data: sendData,
-          isPc: isPc, // 是1--> pc 还是 2--->app
-          title: title,
-          description: description,
-          keyword: keyword
-        },
-        timeout: 30000,
-        type: "post",
-        url: `${BasePath}/getjson`,
-        success: function(data) {
-          console.log(data);
-          if (data.result == 0 && data.data) {
-            data.data.downloadUrl &&
-              _this.setState({ downloadUrl: data.data.downloadUrl });
-            data.data.previewUrl &&
-              _this.setState({ previewUrl: data.data.previewUrl });
-          }
-        },
-        error: function(err) {
-          console.log(err);
-        }
-      });
-    } else {
-      alert("请先选择图片");
-    }
-
-    //emitter.emit('buildfile');
-
-    //   这里我要去调用一个 事件，emitter.emit('addbox')
-  }
   // 这里是，那面 拖住啊 组建的 属性值的 ，函数回调
   changeAttrList(data) {
     // 这里添加属性
@@ -357,53 +228,7 @@ class OptPanel extends Component {
       imgSrc: changedData
     });
   }
-  /// 设置 生成网页 title
-  setHTMLTitle(e) {
-    const target = e.target;
-    const value = target.value;
-    this.setState({
-      title: value
-    });
-  }
-  /// 设置 生成网页 keyword
-  setHTMLKeyWord(e) {
-    const target = e.target;
-    const value = target.value;
-    this.setState({
-      keyword: value
-    });
-  }
-  /// 设置 生成网页 description
-  setHTMLDecription(e) {
-    const target = e.target;
-    const value = target.value;
-    this.setState({
-      description: value
-    });
-  }
-  // 选择 网页 类型 pc，app
-  setPageType(e) {
-    const target = e.target;
-    const value = target.value;
-    this.setState({
-      pageType: value
-    });
-  }
-  // 点击下载  ===============
-  download(e) {
-    const url = this.state.downloadurl;
-    url &&
-      $.ajax({
-        type: "get",
-        url: url,
-        success: function(data) {
-          console.log("下载文件成功");
-        },
-        error: function(err) {
-          alert(err);
-        }
-      });
-  }
+
   // 需要对 this.state.imgSrc 数组，进行 改变 left，top，width，height
   // 删除 点击区域
   delDragArea(data) {
@@ -451,57 +276,6 @@ class OptPanel extends Component {
     console.log("------------------------------------------");
     return (
       <div className="img_coporation">
-        <div className="page-config">
-          {/*专题页 类型 pc  app  */}
-          <div className="pageType">
-            <span className="txt">专题类型：</span>
-            <label htmlFor="">
-              <input
-                type="radio"
-                name="pageName"
-                onClick={this.setPageType.bind(this)}
-                value="pc"
-              />
-              <span>PC端</span>
-            </label>
-            <label htmlFor="">
-              <input
-                type="radio"
-                name="pageName"
-                onClick={this.setPageType.bind(this)}
-                value="app"
-              />
-              <span>APP端</span>
-            </label>
-          </div>
-          {/* 网页 配置，名称，关键字，描述 */}
-          <div className="htmlTitle">
-            <label htmlFor="">
-              <span className="txt">网页标题：</span>
-              <input
-                type="text"
-                onChange={this.setHTMLTitle.bind(this)}
-                placeholder="请输入网页 名称"
-              />
-            </label>
-            <label htmlFor="">
-              <span className="txt">网页关键字：</span>
-              <input
-                type="text"
-                onChange={this.setHTMLKeyWord.bind(this)}
-                placeholder="请输入网页 关键字"
-              />
-            </label>
-            <label htmlFor="">
-              <span className="txt">网页描述：</span>
-              <input
-                type="text"
-                onChange={this.setHTMLDecription.bind(this)}
-                placeholder="请输入网页 描述"
-              />
-            </label>
-          </div>
-        </div>
 
         {this.state.imgSrc.map((elm, idx) => {
           var indexTag = elm.id;
@@ -512,66 +286,30 @@ class OptPanel extends Component {
                   elm.isActive ? "img_box bounds ac" : "img_box bounds"
                 }
                 id={elm.id}
-                onClick={this.choosedImg.bind(this)}
+                onClick={this.choosedImg}
               >
                 {/* 删除图片 ===按钮 */}
                 {/* <i className="remove-img"></i> */}
-                <DelBtn needData={elm.id} clickCb={this.delImg.bind(this)} />
-                <img
-                  src={elm.src}
-                  alt=""
-                  id={elm.id}
-                  onLoad={this.imgOnload.bind(this)}
-                />
+                <DelBtn needData={elm.id} clickCb={this.delImg} />
+                <img src={elm.src} alt="" id={elm.id} onLoad={this.imgOnload} />
                 {elm.clkArr &&
                   elm.clkArr.map((elm, index) => {
                     return (
                       <Drag
                         key={index}
                         id={elm.id}
-                        delDragArea={this.delDragArea.bind(this)}
+                        delDragArea={this.delDragArea}
                         parentId={indexTag}
-                        dragMove={this.dragMove.bind(this)}
-                        changeAttrList={this.changeAttrList.bind(this)}
-                        handleMouseUp={this.handleMouseUp.bind(this)}
+                        dragMove={this.dragMove}
+                        changeAttrList={this.changeAttrList}
+                        handleMouseUp={this.handleMouseUp}
                       />
                     );
                   })}
-
               </div>
             </div>
           );
         })}
-        
-        <div className="page-func">
-          <input type="file" onChange={this.choose.bind(this)} />
-          <button onClick={this.getLayData.bind(this)}>开始构建</button>
-          {
-            <a
-              href={this.state.previewUrl}
-              style={{
-                display: this.state.previewUrl ? "inline-block" : "none"
-              }}
-              className="ml"
-              target="_blank"
-            >
-              预览
-            </a>
-          }
-          {
-            <a
-              href={this.state.downloadUrl}
-              style={{
-                display: this.state.downloadUrl ? "inline-block" : "none"
-              }}
-              className="ml"
-              download={this.state.downloadUrl}
-            >
-              点击下载
-            </a>
-          }
-          {/* <button onClick = {this.storageData.bind(this)}>保存当前配置数据</button> */}
-        </div>
       </div>
     );
   }

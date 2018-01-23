@@ -15,8 +15,8 @@
     "node-sass-chokidar": "0.0.3",
     "npm-run-all": "^4.1.2",
     "proxyquire": "^1.8.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-dragger-r": "0.0.12",
     "rewire": "^3.0.2",
     "sass-loader": "^6.0.6",
@@ -36,13 +36,13 @@
     "imagemin-mozjpeg": "^7.0.0",
     "imagemin-pngquant": "^5.0.1",
     "react-app-rewired": "^1.4.0",
-    "react-scripts": "^1.0.14"
+    "react-scripts": "^1.0.14",
+    "reqwest": "^2.0.5"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build && cross-env NODE_ENV=production npm run server",
     "test": "react-app-rewired test --env=jsdom && cross-env NODE_ENV=test npm run server",
-    
     "server": "node server",
     "eject": "react-scripts eject"
   }

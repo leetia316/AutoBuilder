@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-
+import OptPanel from "../OptPanel";
+import FileUpload from "../FileUpload";
 import "./index.scss";
 
 class MainPanel extends Component {
@@ -8,7 +9,10 @@ class MainPanel extends Component {
   }
   render(props) {
     return (
-      <div className="main-wrap"></div>
+      <div>
+        <OptPanel onClick={this.props.choosedImg} />
+        <FileUpload />
+      </div>
     );
   }
 }
