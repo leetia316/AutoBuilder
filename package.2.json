@@ -39,10 +39,10 @@
     "react-scripts": "^1.0.14"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build && cross-env NODE_ENV=production npm run server",
-    "test": "react-app-rewired test --env=jsdom && cross-env NODE_ENV=test npm run server",
-    
+    "start": "node scripts/customized-config start",
+    "build": "node scripts/customized-config build && cross-env NODE_ENV=production npm run server",
+    "test": "cross-env NODE_ENV=test npm run server && node scripts/customized-config test --env=jsdom",
+    "dev": "cross-env NODE_ENV=development npm run server",
     "server": "node server",
     "eject": "react-scripts eject"
   }

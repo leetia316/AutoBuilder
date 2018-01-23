@@ -5,6 +5,8 @@ import $ from "jquery";
 
 import "./index.scss";
 
+//import DonePanel from "../DonePanel";
+
 // 引入 右上角 删除 按钮 组件
 import DelBtn from "../DelBtn";
 
@@ -540,7 +542,7 @@ class OptPanel extends Component {
             </div>
           );
         })}
-
+        
         <div className="page-func">
           <input type="file" onChange={this.choose.bind(this)} />
           <button onClick={this.getLayData.bind(this)}>开始构建</button>

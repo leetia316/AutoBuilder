@@ -1,12 +1,28 @@
 import React, { Component } from "react";
 import ReactDom from "react-dom";
-import "./index.css";
-import Header from "./components/Header";
+import "./index.scss";
+
+import { LocaleProvider, message, Layout, Menu, Icon } from 'antd';
+// 由于 antd 组件的默认文案是英文，所以需要修改为中文
+import zhCN from 'antd/lib/locale-provider/zh_CN';
+import MainPanel from "./components/MainPanel";
 import FuncPanel from "./components/FuncPanel";
 import OptPanel from "./components/OptPanel";
+import Head from "./components/Header";
+import Foot from "./components/Footer";
 
-// 显示头部信息
-const headerTitle = "专题可视化构建工具";
+const { Header, Content, Footer, Sider } = Layout;
+
+// 全局名称显示头部信息
+const UIConfig = {
+  header: {
+    content: "专题可视化构建工具"
+  },
+  footer: {
+    content: 'Design ©2018 Created by xxx'
+  }
+};
+
 // 左侧 导航栏 数据
 const leftNavList = [
   {
@@ -26,19 +42,29 @@ class App extends Component {
 
   render() {
     return (
-      <div id="root">
-        <Header header={headerTitle} />
-        <div className="wrap">
-          <div className="left">
-            <FuncPanel list={leftNavList} />
-          </div>
-          <div className="right">
-            <OptPanel />
-          </div>
-        </div>
-      </div>
+      <LocaleProvider locale={zhCN}>
+        <Layout>
+          <Header>
+            <Head>{UIConfig.header.content}</Head>
+          </Header>
+          <Layout>
+            <Sider>
+              <FuncPanel list={leftNavList} />
+            </Sider>
+            <Content>
+              <MainPanel />
+            </Content>
+            <Sider>
+              <OptPanel />
+            </Sider>
+          </Layout>
+          <Footer>
+            <Foot>{UIConfig.footer.content}</Foot>
+          </Footer>
+        </Layout>
+      </LocaleProvider>
     );
   }
 }
 
-ReactDom.render(<App />, document.getElementById("content"));
+ReactDom.render(<App />, document.getElementById("root"));
