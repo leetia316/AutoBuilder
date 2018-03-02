@@ -271,18 +271,27 @@ class CfgPanel extends Component {
                   placeholder={typeData.inputUrlTip}
                   onChange={this.handleInputCg}
                   value={this.dataCoperation(sourceData.url,function (val){
-                    console.log(val);
-                    return val && val.length && val.indexOf('?') != -1 && val.split('?')[1].split('&')[0].split('=')[1] || val;
+                    console.log(val);   
+                    // let tVal = val;                
+                    // if(val && val.indexOf('batchId') != -1){
+                    //   if(val.split('?')[1].split('&')[0].split('=')[1]){
+                    //     tVal = val.split('?')[1].split('&')[0].split('=')[1];
+                    //   }else{
+                    //     tVal = "";
+                    //   }
+                    // }
+                    // return tVal;
+                    return (val && val.indexOf('batchId') != -1) ? (val.split('?')[1].split('&')[0].split('=')[1] || "") : val;
                   })}
                   defaultValue={this.dataCoperation(sourceData.url,function (val){
                     console.log(val);
-                    return val && val.length && val.indexOf('?') != -1 && val.split('?')[1].split('&')[0].split('=')[1] || val;
+                    return (val && val.indexOf('batchId') != -1) ? (val.split('?')[1].split('&')[0].split('=')[1] || "") : val;
                   })}
                   autosize={{ minRows: 2, maxRows: 6 }}
                 />
               </FormItem>
-            )}
-
+            )
+          }
 
           {/* 设置领取代金券 后 跳转地址 */}
           {

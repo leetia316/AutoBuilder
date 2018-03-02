@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Async from "react-code-splitting";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route, NavLink ,Redirect } from "react-router-dom";
 import { useStrict } from "mobx";
 import { Provider } from "mobx-react";
 import rootStore from "./stores/RootStore";
@@ -31,7 +31,7 @@ class App extends Component {
   render() {
     return (
       <Provider {...rootStore}>
-        <Router>
+        <BrowserRouter>
           <LocaleProvider locale={zhCN}>
             <Layout>
               <Header>
@@ -41,12 +41,22 @@ class App extends Component {
               <Route
                 path="/"
                 exact
+                render={() => <Redirect to="/home" />}
+              />
+              <Route
+                path="/home"
+                exact
                 component={() => <Async load={import("./views/Home")} />}
               />
               <Route
                 path="/about"
                 exact
                 component={() => <Async load={import("./views/about")} />}
+              />
+              <Route
+                path="/urlChange"
+                exact
+                component={() => <Async load={import("./views/urlChange")} />}
               />
               {/* <Route
                 path="/mine"
@@ -72,11 +82,14 @@ class App extends Component {
               <Footer>
                 <ul className="router">
                   <li>
-                    <Link to="/">首页</Link>
+                    <NavLink activeClassName="active-li-item" to="/home">首页</NavLink>
+                  </li>
+                  <li>
+                    <NavLink activeClassName="active-li-item" to="/urlChange">地址转换</NavLink>
                   </li>
                   
                   <li>
-                    <Link to="/about">关于</Link>
+                    <NavLink activeClassName="active-li-item" to="/about">关于</NavLink>
                   </li>
                   {/* <li>
                     <Link to="/mine">使用须知</Link>
@@ -95,7 +108,7 @@ class App extends Component {
               </Footer>
             </Layout>
           </LocaleProvider>
-        </Router>
+        </BrowserRouter>
       </Provider>
     );
   }
