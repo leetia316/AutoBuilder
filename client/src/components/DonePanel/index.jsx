@@ -14,7 +14,10 @@ class DonePanel extends Component {
   // 得到布局 数据函数==============向后台发起  ajax 通信，数据，
   getLayData = () => {
     const data = this.props.UIStore.imgSrc;
+    let dragData = this.props.UIStore.clickSrc;
     // 根据 imgSrc 数据算取，点击区域的 left ,top,width,height,css 样式
+    // 由于数据变化 点击区域数据单独拿出来
+    
 
     const totalArr = [];
     data.map((elm, idx) => {
@@ -24,8 +27,8 @@ class DonePanel extends Component {
       const arr = [];
       // 轮询 点击区域
       // 需判断是不是代金券  配置，是代金券需要对数据 组装
-      elm.clkArr &&
-        elm.clkArr.map((elmt, index) => {
+      dragData[elm.id] &&
+      dragData[elm.id].map((elmt, index) => {
           const widthRate = Number(elmt.width / parentWidth);
           const width = `${( (widthRate > 1 ? 1:widthRate ) * 100).toFixed(2)}%`;
           const height = `${(elmt.height / parentHeight * 100).toFixed(2)}%`;

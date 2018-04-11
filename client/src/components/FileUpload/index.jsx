@@ -60,13 +60,20 @@ class FileUpload extends Component {
           //console.log(img.width,img.height);
         };
 
+        // var obj = {
+        //   id: new Date().getTime() + "",
+        //   src: src,
+        //   isActive: false
+        // };
         var obj = {
           id: new Date().getTime() + "",
-          src: src,
-          isActive: false
+          src: src
         };
-
-        this.store.floorDataPush(obj);
+        this.store.setWholeImgSrc( obj );
+       
+        this.store.clearFloorImgSrc();
+        //this.store.imgSrc = [];
+        //this.store.floorDataPush(obj);
       };
     }
 

@@ -31,13 +31,47 @@ class UIStore {
   @observable imgSrc = []; //选配数据集合
   @observable floorOnId = ""; //激活的楼层Id
   @observable dragOnId = ""; //激活的拖拽块Id
+  //楼层点击区域 集合
+  // 数据结构 { `${id}`:[ { left:'',top:'',width:'',height:'',id:'' } ] }
+  @observable clickSrc = {}; 
+
 
   @observable downloadUrl = ""; // 下载地址
   @observable previewUrl = ""; // 预览地址
 
+  // 整张图片数据源 base64
+  @observable wholeImgSource = {};
+  // 标志位，是否显示 切割线和 切割按钮
+  @observable isShowSplitLine = false;
+
   @action
   initData(key, value) {
     this[key] = value;
+  }
+
+  // 更新整张图片数据源
+  @action
+  setWholeImgSrc = ( data ) =>{
+    this.wholeImgSource = data;
+  }
+//  let imgSrc.length = 0;
+  @action
+  clearFloorImgSrc = () => {
+    this.imgSrc.length = 0;
+  }
+  // set imgSrc
+  @action
+  setImgSrc = (data) =>{
+    return new Promise(function(resolve,reject){
+
+      if( Object.prototype.toString.call(data) === "[object Array]"){
+        console.log(2);
+        this.imgSrc = data;
+        resolve();
+      }else{
+        reject();
+      }
+    }.bind(this));    
   }
 
   // 更新对象
@@ -103,23 +137,41 @@ class UIStore {
 
   //删除List中的指定项
   delListItem = id => {
-    // 需要判断删除的 楼层中是不是 dragOnId
-    const delFloorData = this.getListItem(id);
-    const isFindDragdIdInDelData =
-      (delFloorData.clkArr &&
-        delFloorData.clkArr.length &&
-        delFloorData.clkArr.filter((elm, idx) => {
-          return elm.id === this.dragOnId;
-        })) ||
-      "";
-
-    //var isFindDragdIdInDelData = !!this.getSubListItemIndex(this.dragOnId);
-    isFindDragdIdInDelData.length && this.setDragId("");
 
     this.imgSrc.splice(this.getListItemIndex(id), 1);
 
-    // 实时设置 floorOnId
+    // 需要判断删除的 楼层中是不是 dragOnId
+    let dragData = Object.assign( {},this.clickSrc);
+    let delFloorDragData = dragData[id] || '';
+    let isDragIdDel = '';
+    delFloorDragData && delFloorDragData.map( ( elm,idx )=>{
+      if( elm.id == this.dragOnId ){
+        this.setDragId( '' );
+      }
+    } );
+    // 删除楼层 对应楼层的点击数据 也要清空
+    dragData[id] && delete dragData[id];
+ // 实时设置 floorOnId
     (!this.imgSrc.length || id == this.floorOnId) && this.setFloorOnId("");
+
+
+    // 需要判断删除的 楼层中是不是 dragOnId
+    // const delFloorData = this.getListItem(id);
+    // const isFindDragdIdInDelData =
+    //   (delFloorData.clkArr &&
+    //     delFloorData.clkArr.length &&
+    //     delFloorData.clkArr.filter((elm, idx) => {
+    //       return elm.id === this.dragOnId;
+    //     })) ||
+    //   "";
+
+    // //var isFindDragdIdInDelData = !!this.getSubListItemIndex(this.dragOnId);
+    // isFindDragdIdInDelData.length && this.setDragId("");
+
+    // this.imgSrc.splice(this.getListItemIndex(id), 1);
+
+    // // 实时设置 floorOnId
+    // (!this.imgSrc.length || id == this.floorOnId) && this.setFloorOnId("");
   };
 
   // subList相关
@@ -130,6 +182,7 @@ class UIStore {
    * 获取clkArr中的列表项
    */
   getSubListItem = (id = this.dragOnId, parentId = this.floorOnId) => {
+
     if (!id) {
       return {};
     }
@@ -137,18 +190,70 @@ class UIStore {
       message.error("该操作需要先选中楼层!");
       return;
     }
+    //this.clickSrc[parentId]
+    let dragData = Object.assign( {},this.clickSrc );
 
-    const tResult = this.imgSrc.slice().filter((item, pIndex) => {
-      return item.id === parentId;
-    });
-    if (tResult[0].clkArr === undefined) {
-      return {};
-    }
-    return tResult[0].clkArr.filter((it, cIndex) => {
-      return it.id === id;
-    })[0];
+    let chooseDragData = dragData[parentId];
+    
+    let renderData = '';
+    chooseDragData.map( (elm,idx)=>{
+        if( elm.id == id ){
+          renderData = elm;
+        }
+    } );
+    return renderData;
+    
+
+    // const tResult = this.imgSrc.slice().filter((item, pIndex) => {
+    //   return item.id === parentId;
+    // });
+    // if (tResult[0].clkArr === undefined) {
+    //   return {};
+    // }
+    // return tResult[0].clkArr.filter((it, cIndex) => {
+    //   return it.id === id;
+    // })[0];
   };
-
+  // 更行 对象 的 id 
+  setObjItems = ( data, id = this.dragOnId, parentId = this.floorOnId ) =>{
+    if (!parentId) {
+      message.error("该操作需要先选中楼层!");
+      return;
+    }
+    const dataSourse = Object.assign( {} ,this.clickSrc);
+    for( let key in dataSourse ){
+      if (dataSourse.hasOwnProperty(key)) {
+        if( key == parentId ){
+          let changed = [];
+          dataSourse[key].map( ( elm,idx )=>{
+            let changedObj = {};
+            if( elm.id == id ){
+              changedObj  = this.conbaiObj( elm,data );
+              //changedObj = Object.assign( elm ,data);
+            }else{
+              changedObj = elm;
+            }
+            changed.push( changedObj );
+          } );
+          dataSourse[key] = changed;
+        }
+      }
+    }
+    this.clickSrc = dataSourse;
+    //console.log( this.clickSrc );
+  }
+  // 合并两个 对象 
+  conbaiObj = ( taret,changed ) =>{
+    for( let key in changed ){
+      if( changed.hasOwnProperty(key) ){
+        //taret[key] = changed[key] != undefined && changed[key] || taret[key];
+        if( changed[key] != undefined ){
+          taret[key] = changed[key];
+        }
+      }
+    }
+    return taret;
+  }
   setSubListItem = (data, id = this.dragOnId, parentId = this.floorOnId) => {
     if (!parentId) {
       message.error("该操作需要先选中楼层!");
@@ -188,7 +293,49 @@ class UIStore {
 
     this.imgSrc = pList;
   };
+  // clickSrc(增加点击区域数据) 增加 id 和
+  addDragItem = ( data,  parentId = this.floorOnId ) =>{
+    if (!parentId) {
+      message.error("该操作需要先选中楼层!");
+      return;
+    }
+    if( !this.clickSrc[parentId] ){
+      this.clickSrc[parentId] = [];
+    }
+    this.clickSrc[parentId].push( data );
+    //console.log( this.clickSrc );
+  };
+  // 删除点击区域数据 clickSrc
+  delDragItem = ( id,parentId ) =>{
+    if (!parentId) {
+      message.error("该操作需要先选中楼层!");
+      return;
+    }
+    // 数据源
+    const dataSourse = Object.assign({}, this.clickSrc);
+    for(let key in  dataSourse){
+      if( key == parentId ){
+        const tData = dataSourse[key];
+        const changedData = [];
+        tData.map( ( elm,idx )=>{
+          if( elm.id !=id ){
+            changedData.push( elm );
+          }
+        } );
+        dataSourse[key] = changedData;
+      }
+    }
+    
+    //this.clickSrc[parentId] && delete this.clickSrc[parentId];
+    //this.clickSrc[parentId] = [];
+    const tDragId = this.dragOnId;
+    tDragId == id && this.setDragId("");
 
+   
+    this.clickSrc = dataSourse;
+  
+    console.log( this.clickSrc );
+  };
   delSubListItem = (id, parentId) => {
     if (!parentId) {
       message.error("该操作需要先选中楼层!");
@@ -298,12 +445,14 @@ class UIStore {
 
   @action
   addDragData = data => {
-    this.addSubListItem(data);
+    //this.addSubListItem(data);
+    this.addDragItem( data );
   };
 
   @action
   setDragData = (data, id, parentId) => {
-    this.setSubListItem(data, id, parentId);
+    this.setObjItems( data, id, parentId );
+    //this.setSubListItem(data, id, parentId);
   };
 
   @action
@@ -327,7 +476,8 @@ class UIStore {
 
   @action
   delActiveDragBox = (id, parentId) => {
-    this.delSubListItem(id, parentId);
+    //this.delSubListItem(id, parentId);
+    this.delDragItem( id,parentId );
   };
 
   @action

@@ -268,3 +268,10 @@ HTTPS=true npm start
 ### 单个JS文件应用
 
 如果文件符合AMD/CMD规范可以直接import，如果不符合请在public/index.html中引入
+
+
+
+
+### 新增了clipboard，复制到粘贴板插件 clipboard.js
+
+具体使用方法参照urlChange 以及网址：https://www.cnblogs.com/yunser/p/7628031.html

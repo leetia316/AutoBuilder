@@ -36,10 +36,13 @@ var host = config.host || 'localhost';
 var port = utils.normalizePort(config.port || '8080');
 // 打印输出端口号
 //console.log('当前监听端口号为： ' + port);
+console.log(`----------------------------------------`);
+console.log(`${path.resolve(__dirname,'./build')}`);
+console.log(`----------------------------------------`);
 
-var root = './build';
-var downDIST = `./build`;
-var autoBuildBasePath = './components/AutoBuild';
+var root = `${path.resolve(__dirname,'./build')}`;//'./build';
+var downDIST = `${path.resolve(__dirname,'./build')}`;//`./build`;
+var autoBuildBasePath = `${path.resolve(__dirname,'./components/AutoBuild')}`;//'./components/AutoBuild';
 
 var app = express();
 
@@ -145,10 +148,21 @@ app.post('/getjson', (req, res) => {
   // 6,压缩图片
   // 7,给给 client 端 生成的 hash 
 
-  //复制源基本路径
-  const copyBasePath = './components/AutoBuild/public';
-  //复制 目的 基本路径
-  const targBasePath = './build';
+  //复制源基本路径 //'./components/AutoBuild/public';
+  const copyBasePath = `${path.resolve(__dirname,'./components/AutoBuild/public')}`;
+  //复制 目的 基本路径 ./build'
+  const targBasePath = `${path.resolve(__dirname,'./build')}`;
+  console.log('--------------------------');
+  console.log(copyBasePath);
+
+  console.log(targBasePath);
+  console.log('--------------------------');
+
+  // 判断 build 文件夹，有没有，没有就创建一个
+  if(!fs.existsSync(targBasePath)){
+    fs.mkdirSync(targBasePath);
+  }
+
   //console.log("请求参数：",req.body)
   var data = JSON.parse(req.body.data)
   
@@ -161,6 +175,7 @@ app.post('/getjson', (req, res) => {
   console.log(`根据布局数据 生成hash：${dataHash}`); // 9b74c9897bac770ffc029102a200c5de
   
   const hashPath = `${targBasePath}/${dataHash}`;
+  
   // 利用catch 模块判断是不是 hash 文件的存在
   const isEisit = fs.existsSync(hashPath);
   if(isEisit){
@@ -256,7 +271,7 @@ app.post('/getjson', (req, res) => {
 
 // 编写 下载接口 
 app.get('/app.zip', (req, res) => {
-  console.log(req);
+  //console.log(req);
   // fs.readFileSync('./app.zip',(err,data)=>{
   //     res.send(data)
   // })
@@ -293,7 +308,7 @@ app.get('/pc.zip', (req, res) => {
 
 // 设置 服务器端口号:port
 // 主机名 ：host
-app.listen(port, host, () => {
+app.listen(port, () => {
   console.log(`server is running http://${host}:${port}`);
 });
 

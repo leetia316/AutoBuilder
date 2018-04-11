@@ -1,9 +1,13 @@
 {
-  "name": "autobuilder",
-  "description": "AutoBuilder",
-  "version": "0.0.1474",
+  "name": "pm2-app",
+  "version": "1.0.0",
+  "description": "Autobuilder 1.0 Stable��",
+  "main": "ecosystem.config.js",
   "scripts": {
-    "start": "npm run server",
-    "server": "node client/server && node server/server"
-  }
+	"pm2-stop": "pm2 stop all",
+	"pm2-start": "pm2 startOrRestart ecosystem.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
 }

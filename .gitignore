@@ -8,12 +8,14 @@
 
 # production
 /build
+/logs
 server/components/AutoBuild/public/app/css/index.css
 server/components/AutoBuild/public/pc/index.html
 server/components/AutoBuild/public/app/index.html
 server/components/AutoBuild/img/app/img_00.jpg
 
 # misc
+.vscode
 .DS_Store
 .env.local
 .env.development.local

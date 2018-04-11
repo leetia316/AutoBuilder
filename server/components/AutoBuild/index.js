@@ -4,6 +4,7 @@
 // 引入所需模块=================================
 var fs = require('fs');// 文件某块
 var image = require('images');//图片，获取片宽高，
+var path = require('path');
 var cheerio = require('cheerio');// 获取html字符串，操作dom cheerio.load()
 // //编译版本，app还是pc============
 // var edition = process.argv[2];
@@ -40,11 +41,11 @@ var imgUrl = [];
 // title,discription,kewword;
 var headHTMLAttr = {};
 
-const SRC = './components/build';
-const DIST = './components/AutoBuild/public';
+const SRC = `${path.resolve(__dirname,'../../components/build')}`;//'./components/build';
+const DIST = `${path.resolve(__dirname,'../../components/AutoBuild/public')}`;//'./components/AutoBuild/public';
 
 function buildHtml(opt) {
-   const basePath = `./build/${opt.hash}`;
+   const basePath = `${path.resolve(__dirname,`../../build/${opt.hash}`)}`;//./build/${opt.hash}
   //console.log(opt, opt.configData);
   //编译版本，app还是pc============
   var edition = opt.pageType;
@@ -58,7 +59,7 @@ function buildHtml(opt) {
   imgUrl = getImgAtr(`${basePath}/${edition}/img`);
 
   // 得到配置 json ，吧 imgUrl 和json组合起来  //'autoBuild/src/json/'
-  combinationData(getConfigureJson, opt.configData || `./components/AutoBuild/json/${edition}.json`);
+  combinationData(getConfigureJson, opt.configData || `${path.resolve(__dirname,`../../components/AutoBuild/json/${edition}.json`)}`);//./components/AutoBuild/json/${edition}.json`);
   // 生成 css，文件
   //createScss(`${DIST}/${edition}/css/index.css`, buildScssData);
   createScss(`${basePath}/${edition}/css/index.css`, buildScssData);
@@ -68,7 +69,7 @@ function buildHtml(opt) {
   //copyImg(`${SRC}/img/${edition}`, `${DIST}/${edition}/img`);
 
   ///读取 html 模板文件========================
-  var contHTML = fs.readFileSync(`./components/AutoBuild/tpl/${edition}.html`);
+  var contHTML = fs.readFileSync(`${path.resolve(__dirname,`../../components/AutoBuild/tpl/${edition}.html`)}`);//./components/AutoBuild/tpl/${edition}.html
 
   $ = cheerio.load(contHTML);
   // 操作html，模板===================，填充内容

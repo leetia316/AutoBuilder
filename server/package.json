@@ -9,7 +9,7 @@
     "express": "4.16.2",
     "fs": "0.0.1-security",
     "images": "3.0.1",
-    "jquery": "3.0.0",
+    "jquery": "1.11.0",
     "jszip": "3.1.5",
     "zip-local": "0.3.4"
   },

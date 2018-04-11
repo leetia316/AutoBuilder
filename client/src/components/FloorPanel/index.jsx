@@ -146,7 +146,7 @@ class FloorPanel extends Component {
             src={this.props.src}
             alt=""
             id={this.props.id}
-            onLoad={this.imgOnload}
+            //onLoad={this.imgOnload}
             draggable="false"
           />
           {/* 删除图片 ===按钮 */}
@@ -160,12 +160,13 @@ class FloorPanel extends Component {
                 top: elm.top || 0
               };
               return (
+                
                 <Drag
                   key={elm.id}
                   id={elm.id}
                   parentId={this.props.id}
                   styleObj={styleObj}
-                  isActive={!!(this.props.dragOnId === elm.id)}
+                  isActive={!!(this.props.dragOnId == elm.id)}
                   handleClick={this.dragHandleClick}
                   dragMove={this.dragMove}
                   handleMouseUp={this.handleMouseUp}

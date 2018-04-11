@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Async from "react-code-splitting";
-import { BrowserRouter, Route, NavLink ,Redirect } from "react-router-dom";
+import { HashRouter, Route, NavLink ,Redirect } from "react-router-dom";
 import { useStrict } from "mobx";
 import { Provider } from "mobx-react";
 import rootStore from "./stores/RootStore";
@@ -13,6 +13,7 @@ import Head from "./components/Header";
 import Foot from "./components/Footer";
 import DonePanel from "./components/DonePanel";
 import "./App.scss";
+//import Home from './views/Home';
 useStrict(true);
 
 const { Header, Footer } = Layout;
@@ -31,7 +32,7 @@ class App extends Component {
   render() {
     return (
       <Provider {...rootStore}>
-        <BrowserRouter>
+        <HashRouter>
           <LocaleProvider locale={zhCN}>
             <Layout>
               <Header>
@@ -46,8 +47,9 @@ class App extends Component {
               <Route
                 path="/home"
                 exact
+                //component = {Home}
                 component={() => <Async load={import("./views/Home")} />}
-              />
+                />
               <Route
                 path="/about"
                 exact
@@ -108,7 +110,7 @@ class App extends Component {
               </Footer>
             </Layout>
           </LocaleProvider>
-        </BrowserRouter>
+        </HashRouter>
       </Provider>
     );
   }
